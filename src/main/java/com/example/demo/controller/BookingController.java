@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Booking;
-import com.example.demo.entity.Users;
 import com.example.demo.exception.DuplicateRecordException;
 import com.example.demo.exception.InternalServerException;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.BookingModel;
-import com.example.demo.model.UserModel;
 import com.example.demo.service.impl.BookingService;
 
 @RestController
@@ -60,7 +58,6 @@ public class BookingController {
 		
 		try {
 			Booking booking = bookingService.addBooking(bookingModelIn);
-			System.out.println(booking);
 			if (null != booking) {
 				httpStatus = HttpStatus.CREATED;
 				bookingModel.setCreateat(booking.getCreateat());
@@ -79,14 +76,14 @@ public class BookingController {
 
 		}
 	
-	@PutMapping("api/bookings/{patienID}")
+	@PutMapping("api/bookings/{patientID}")
 	@CrossOrigin(origins = "http://localhost:3000")
 	public ResponseEntity<Object> editBooking(@Valid @RequestBody BookingModel bookingModel,
-			@PathVariable("patienID") int patienID) throws SQLException {
+			@PathVariable("patientID") int patientID) throws SQLException {
 			HttpStatus httpStatus = null;
 			Booking booking = new Booking();
 			try {
-				booking = bookingService.editBooking(bookingModel, patienID);
+				booking = bookingService.editBooking(bookingModel, patientID);
 				httpStatus = HttpStatus.OK;
 
 			} catch (Exception e) {

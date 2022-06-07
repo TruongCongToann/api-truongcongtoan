@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.DAO.IBookingDAO;
 import com.example.demo.entity.Booking;
-import com.example.demo.entity.Users;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.model.BookingModel;
 import com.example.demo.service.IBookingService;
@@ -54,32 +52,32 @@ public class BookingService implements IBookingService {
 	//add new  booking
 	@Override
 	public Booking addBooking(BookingModel bookingModel) throws SQLException {
-		if(bookingDAO.getById(bookingModel.getPatientid()) == null ) {
+		
+		if(bookingDAO.getBookingByID(bookingModel.getPatientid()) != null) {
+			
+		return editBooking(bookingModel,bookingModel.getPatientid());
+		
+		}else {
+			
 			Booking booking = new Booking();
-			booking.setPatientid(bookingModel.getPatientid());
+			
+			booking.setCreateat(bookingModel.getCreateat());
+			booking.setDate(bookingModel.getDate());
 			booking.setDoctorid(bookingModel.getDoctorid());
+			booking.setPatientid(bookingModel.getPatientid());
 			booking.setStatusId(bookingModel.getStatusid());
 			booking.setTimetype(bookingModel.getTimetype());
-			booking.setCreateat(bookingModel.getCreateat());
 			booking.setUpdateat(bookingModel.getUpdateat());
-			booking.setDate(bookingModel.getDate());
-			
-			System.out.println("gia tri thu duoc sau khi la "+bookingDAO.save(booking));
 			
 			return bookingDAO.save(booking);
-			}
-		else {
-		 Booking booking =	editBooking(bookingModel, bookingModel.getPatientid());
-		 return booking;
 		}
-		
 	}
 
 
 	//update booking info
 	@Override
 	public Booking editBooking(BookingModel bookingModel, int patientID) throws SQLException {
-		if(getBookingByID(patientID)!= null ) {
+		if(bookingDAO.getBookingByID(bookingModel.getPatientid()) != null ) {
 			Booking booking = bookingDAO.getBookingByID(patientID);
 			
 			if (!booking.getDate().equals(bookingModel.getDate()) ) {
@@ -97,7 +95,7 @@ public class BookingService implements IBookingService {
 			booking.setCreateat(bookingModel.getCreateat());
 			booking.setUpdateat(bookingModel.getUpdateat());
 			
-			return booking;
+			return bookingDAO.saveAndFlush(booking);
 		}else {
 			throw new NotFoundException("Khong tim thay nguoi dung nay");
 		}		
@@ -124,6 +122,7 @@ public class BookingService implements IBookingService {
 				return booking;
 			}else {
 				   throw new NotFoundException("Khong tim thay nguoi dung nay");
+				   
 			}
 		} else {
 			throw new NotFoundException("Khong tim thay nguoi dung nay");
